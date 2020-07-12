@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import urllib
 import os, gettext
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
@@ -29,7 +28,7 @@ from Components.Label import Label
 from Components.Language import language
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_SKIN_IMAGE, SCOPE_LANGUAGE
 from Tools.LoadPixmap import LoadPixmap
-from urllib import urlopen, urlretrieve
+from six.moves.urllib.request import urlretrieve
 from os import system, environ
 from enigma import getDesktop
 
@@ -125,7 +124,7 @@ class DownSkinLIB(Screen):
 
 	def version(self):
 		try:
-			urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-plugins/master/python/Plugins/Extensions/DownSkinLIB/version", "/tmp/version")
+			urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-plugins/master/python/Plugins/Extensions/DownSkinLIB/version", "/tmp/version")
 			self.infogit()
 		except:
 			pass
@@ -322,54 +321,54 @@ class DownSkinLIB(Screen):
 
 	def download_pl(self):
 	# download plugin
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-plugins/master/python/Plugins/Extensions/DownSkinLIB/plugin.py", "/tmp/plugin.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-plugins/master/python/Plugins/Extensions/DownSkinLIB/plugin.py", "/tmp/plugin.py")
 	# end
 		self.install_pl()
 
 	def download_com(self):
 	# download converter
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/AC3DownMixStatus.py", "/tmp/AC3DownMixStatus.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/AlwaysTrue.py", "/tmp/AlwaysTrue.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/Bitrate2.py", "/tmp/Bitrate2.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/CaidBar.py", "/tmp/CaidBar.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/CaidInfo2.py", "/tmp/CaidInfo2.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/CamdInfo3.py", "/tmp/CamdInfo3.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ConverterRotator.py", "/tmp/ConverterRotator.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/CpuUsage.py", "/tmp/CpuUsage.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/DiskInfo.py", "/tmp/DiskInfo.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/EcmInfoLine.py", "/tmp/EcmInfoLine.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/EmuName.py", "/tmp/EmuName.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/EventName2.py", "/tmp/EventName2.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ExtraNumText.py", "/tmp/ExtraNumText.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/FanTempInfo.py", "/tmp/FanTempInfo.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/FlashingDotClock.py", "/tmp/FlashingDotClock.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/FrontendInfo2.py", "/tmp/FrontendInfo2.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/IsNet.py", "/tmp/IsNet.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/MemoryInfo.py", "/tmp/MemoryInfo.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ModuleControl.py", "/tmp/ModuleControl.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/MovieInfo2.py", "/tmp/MovieInfo2.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ProgressDiskSpaceInfo.py", "/tmp/ProgressDiskSpaceInfo.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/RefString.py", "/tmp/RefString.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/RouteInfo.py", "/tmp/RouteInfo.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceInfo2.py", "/tmp/ServiceInfo2.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceInfoEX.py", "/tmp/ServiceInfoEX.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceName2.py", "/tmp/ServiceName2.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceName2.ref", "/tmp/ServiceName2.ref")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceOrbitalPosition2.py", "/tmp/ServiceOrbitalPosition2.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/TestConnection.py", "/tmp/TestConnection.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/TunerBar.py", "/tmp/TunerBar.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/WiFiInfo.py", "/tmp/WiFiInfo.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/AC3DownMixStatus.py", "/tmp/AC3DownMixStatus.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/AlwaysTrue.py", "/tmp/AlwaysTrue.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/Bitrate2.py", "/tmp/Bitrate2.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/CaidBar.py", "/tmp/CaidBar.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/CaidInfo2.py", "/tmp/CaidInfo2.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/CamdInfo3.py", "/tmp/CamdInfo3.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ConverterRotator.py", "/tmp/ConverterRotator.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/CpuUsage.py", "/tmp/CpuUsage.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/DiskInfo.py", "/tmp/DiskInfo.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/EcmInfoLine.py", "/tmp/EcmInfoLine.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/EmuName.py", "/tmp/EmuName.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/EventName2.py", "/tmp/EventName2.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ExtraNumText.py", "/tmp/ExtraNumText.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/FanTempInfo.py", "/tmp/FanTempInfo.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/FlashingDotClock.py", "/tmp/FlashingDotClock.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/FrontendInfo2.py", "/tmp/FrontendInfo2.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/IsNet.py", "/tmp/IsNet.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/MemoryInfo.py", "/tmp/MemoryInfo.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ModuleControl.py", "/tmp/ModuleControl.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/MovieInfo2.py", "/tmp/MovieInfo2.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ProgressDiskSpaceInfo.py", "/tmp/ProgressDiskSpaceInfo.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/RefString.py", "/tmp/RefString.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/RouteInfo.py", "/tmp/RouteInfo.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceInfo2.py", "/tmp/ServiceInfo2.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceInfoEX.py", "/tmp/ServiceInfoEX.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceName2.py", "/tmp/ServiceName2.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceName2.ref", "/tmp/ServiceName2.ref")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/ServiceOrbitalPosition2.py", "/tmp/ServiceOrbitalPosition2.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/TestConnection.py", "/tmp/TestConnection.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/TunerBar.py", "/tmp/TunerBar.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Converter/WiFiInfo.py", "/tmp/WiFiInfo.py")
 	# download renderer
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/AnimatedWeatherPixmap.py", "/tmp/AnimatedWeatherPixmap.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/AnimatedMoonPixmap.py", "/tmp/AnimatedMoonPixmap.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/LabelDuoColors.py", "/tmp/LabelDuoColors.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/MovieCover.py", "/tmp/MovieCover.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/MovieRating.py", "/tmp/MovieRating.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/PiconUni.py", "/tmp/PiconUni.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/RendVolumeText.py", "/tmp/RendVolumeText.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/RendVolumeTextP.py", "/tmp/RendVolumeTextP.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/RunningText.py", "/tmp/RunningText.py")
-		urllib.urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/Watches.py", "/tmp/Watches.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/AnimatedWeatherPixmap.py", "/tmp/AnimatedWeatherPixmap.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/AnimatedMoonPixmap.py", "/tmp/AnimatedMoonPixmap.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/LabelDuoColors.py", "/tmp/LabelDuoColors.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/MovieCover.py", "/tmp/MovieCover.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/MovieRating.py", "/tmp/MovieRating.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/PiconUni.py", "/tmp/PiconUni.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/RendVolumeText.py", "/tmp/RendVolumeText.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/RendVolumeTextP.py", "/tmp/RendVolumeTextP.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/RunningText.py", "/tmp/RunningText.py")
+		urlretrieve("https://raw.githubusercontent.com/Sirius0103/enigma2-components/master/python/Components/Renderer/Watches.py", "/tmp/Watches.py")
 	# end
 		self.install_com()
 

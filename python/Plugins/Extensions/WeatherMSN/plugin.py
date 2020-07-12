@@ -23,7 +23,6 @@
 #
 from __future__ import absolute_import
 from __future__ import print_function
-import urllib2
 import datetime, time
 import os, math, gettext
 from Plugins.Plugin import PluginDescriptor
@@ -41,13 +40,19 @@ from .Components.config import getConfigListEntry, ConfigText, ConfigYesNo, Conf
 from .Components.Pixmap import Pixmap
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_LANGUAGE
 from xml.etree.cElementTree import fromstring as cet_fromstring
-from urllib2 import urlopen, Request, URLError, HTTPError, quote
 from twisted.web.client import downloadPage
 from time import localtime, strftime
 from enigma import eTimer, ePoint
 from enigma import getDesktop
 from os import system, environ
 from datetime import date
+
+import six
+from six.moves import urllib
+from six.moves.urllib.error import URLError, HTTPError
+from six.moves.urllib.parse import quote
+from six.moves.urllib.request import urlopen, Request
+
 
 lang = language.getLanguage()
 environ["LANGUAGE"] = lang[:2]
@@ -2173,44 +2178,44 @@ class WeatherMSN(ConfigListScreen, Screen):
 				phase = _('Full moon')
 		try:
 			self.yulianday['Julianday'] = JD
-			self.sunrise['Sunrise'] = '%s%s%s%s' % (SRh, unichr(58).encode("latin-1"), SRx, SRm)
-			self.sunset['Sunset'] = '%s%s%s%s' % (SSh, unichr(58).encode("latin-1"), SSx, SSm)
-			self.sunculmination['Solstice'] = '%s%s%s%s' % (SCh, unichr(58).encode("latin-1"), SCx, SCm)
-			self.mercuryrise['Mercuryrise'] = '%s%s%s%s' % (P1Rh, unichr(58).encode("latin-1"), P1Rx, P1Rm)
-			self.mercuryset['Mercuryset'] = '%s%s%s%s' % (P1Sh, unichr(58).encode("latin-1"), P1Sx, P1Sm)
-			self.mercuryculmination['Mercuryculmination'] = '%s%s%s%s' % (P1Ch, unichr(58).encode("latin-1"), P1Cx, P1Cm)
-			self.mercuryazimuth['Mercuryazimuth'] = '%s %s' % (P1A, unichr(176).encode("latin-1"))
-			self.venusrise['Venusrise'] = '%s%s%s%s' % (P2Rh, unichr(58).encode("latin-1"), P2Rx, P2Rm)
-			self.venusset['Venusset'] = '%s%s%s%s' % (P2Sh, unichr(58).encode("latin-1"), P2Sx, P2Sm)
-			self.venusculmination['Venusculmination'] = '%s%s%s%s' % (P2Ch, unichr(58).encode("latin-1"), P2Cx, P2Cm)
-			self.venusazimuth['Venusazimuth'] = '%s %s' % (P2A, unichr(176).encode("latin-1"))
-			self.marsrise['Marsrise'] = '%s%s%s%s' % (P4Rh, unichr(58).encode("latin-1"), P4Rx, P4Rm)
-			self.marsset['Marsset'] = '%s%s%s%s' % (P4Sh, unichr(58).encode("latin-1"), P4Sx, P4Sm)
-			self.marsculmination['Marsculmination'] = '%s%s%s%s' % (P4Ch, unichr(58).encode("latin-1"), P4Cx, P4Cm)
-			self.marsazimuth['Marsazimuth'] = '%s %s' % (P4A, unichr(176).encode("latin-1"))
-			self.jupiterrise['Jupiterrise'] = '%s%s%s%s' % (P5Rh, unichr(58).encode("latin-1"), P5Rx, P5Rm)
-			self.jupiterset['Jupiterset'] = '%s%s%s%s' % (P5Sh, unichr(58).encode("latin-1"), P5Sx, P5Sm)
-			self.jupiterculmination['Jupiterculmination'] = '%s%s%s%s' % (P5Ch, unichr(58).encode("latin-1"), P5Cx, P5Cm)
-			self.jupiterazimuth['Jupiterazimuth'] = '%s %s' % (P5A, unichr(176).encode("latin-1"))
-			self.saturnrise['Saturnrise'] = '%s%s%s%s' % (P6Rh, unichr(58).encode("latin-1"), P6Rx, P6Rm)
-			self.saturnset['Saturnset'] = '%s%s%s%s' % (P6Sh, unichr(58).encode("latin-1"), P6Sx, P6Sm)
-			self.saturnculmination['Saturnculmination'] = '%s%s%s%s' % (P6Ch, unichr(58).encode("latin-1"), P6Cx, P6Cm)
-			self.saturnazimuth['Saturnazimuth'] = '%s %s' % (P6A, unichr(176).encode("latin-1"))
-			self.uranusrise['Uranusrise'] = '%s%s%s%s' % (P7Rh, unichr(58).encode("latin-1"), P7Rx, P7Rm)
-			self.uranusset['Uranusset'] = '%s%s%s%s' % (P7Sh, unichr(58).encode("latin-1"), P7Sx, P7Sm)
-			self.uranusculmination['Uranusculmination'] = '%s%s%s%s' % (P7Ch, unichr(58).encode("latin-1"), P7Cx, P7Cm)
-			self.uranusazimuth['Uranusazimuth'] = '%s %s' % (P7A, unichr(176).encode("latin-1"))
-			self.neptunerise['Neptunerise'] = '%s%s%s%s' % (P8Rh, unichr(58).encode("latin-1"), P8Rx, P8Rm)
-			self.neptuneset['Neptuneset'] = '%s%s%s%s' % (P8Sh, unichr(58).encode("latin-1"), P8Sx, P8Sm)
-			self.neptuneculmination['Neptuneculmination'] = '%s%s%s%s' % (P8Ch, unichr(58).encode("latin-1"), P8Cx, P8Cm)
-			self.neptuneazimuth['Neptuneazimuth'] = '%s %s' % (P8A, unichr(176).encode("latin-1"))
+			self.sunrise['Sunrise'] = '%s%s%s%s' % (SRh, six.unichr(58).encode("latin-1"), SRx, SRm)
+			self.sunset['Sunset'] = '%s%s%s%s' % (SSh, six.unichr(58).encode("latin-1"), SSx, SSm)
+			self.sunculmination['Solstice'] = '%s%s%s%s' % (SCh, six.unichr(58).encode("latin-1"), SCx, SCm)
+			self.mercuryrise['Mercuryrise'] = '%s%s%s%s' % (P1Rh, six.unichr(58).encode("latin-1"), P1Rx, P1Rm)
+			self.mercuryset['Mercuryset'] = '%s%s%s%s' % (P1Sh, six.unichr(58).encode("latin-1"), P1Sx, P1Sm)
+			self.mercuryculmination['Mercuryculmination'] = '%s%s%s%s' % (P1Ch, six.unichr(58).encode("latin-1"), P1Cx, P1Cm)
+			self.mercuryazimuth['Mercuryazimuth'] = '%s %s' % (P1A, six.unichr(176).encode("latin-1"))
+			self.venusrise['Venusrise'] = '%s%s%s%s' % (P2Rh, six.unichr(58).encode("latin-1"), P2Rx, P2Rm)
+			self.venusset['Venusset'] = '%s%s%s%s' % (P2Sh, six.unichr(58).encode("latin-1"), P2Sx, P2Sm)
+			self.venusculmination['Venusculmination'] = '%s%s%s%s' % (P2Ch, six.unichr(58).encode("latin-1"), P2Cx, P2Cm)
+			self.venusazimuth['Venusazimuth'] = '%s %s' % (P2A, six.unichr(176).encode("latin-1"))
+			self.marsrise['Marsrise'] = '%s%s%s%s' % (P4Rh, six.unichr(58).encode("latin-1"), P4Rx, P4Rm)
+			self.marsset['Marsset'] = '%s%s%s%s' % (P4Sh, six.unichr(58).encode("latin-1"), P4Sx, P4Sm)
+			self.marsculmination['Marsculmination'] = '%s%s%s%s' % (P4Ch, six.unichr(58).encode("latin-1"), P4Cx, P4Cm)
+			self.marsazimuth['Marsazimuth'] = '%s %s' % (P4A, six.unichr(176).encode("latin-1"))
+			self.jupiterrise['Jupiterrise'] = '%s%s%s%s' % (P5Rh, six.unichr(58).encode("latin-1"), P5Rx, P5Rm)
+			self.jupiterset['Jupiterset'] = '%s%s%s%s' % (P5Sh, six.unichr(58).encode("latin-1"), P5Sx, P5Sm)
+			self.jupiterculmination['Jupiterculmination'] = '%s%s%s%s' % (P5Ch, six.unichr(58).encode("latin-1"), P5Cx, P5Cm)
+			self.jupiterazimuth['Jupiterazimuth'] = '%s %s' % (P5A, six.unichr(176).encode("latin-1"))
+			self.saturnrise['Saturnrise'] = '%s%s%s%s' % (P6Rh, six.unichr(58).encode("latin-1"), P6Rx, P6Rm)
+			self.saturnset['Saturnset'] = '%s%s%s%s' % (P6Sh, six.unichr(58).encode("latin-1"), P6Sx, P6Sm)
+			self.saturnculmination['Saturnculmination'] = '%s%s%s%s' % (P6Ch, six.unichr(58).encode("latin-1"), P6Cx, P6Cm)
+			self.saturnazimuth['Saturnazimuth'] = '%s %s' % (P6A, six.unichr(176).encode("latin-1"))
+			self.uranusrise['Uranusrise'] = '%s%s%s%s' % (P7Rh, six.unichr(58).encode("latin-1"), P7Rx, P7Rm)
+			self.uranusset['Uranusset'] = '%s%s%s%s' % (P7Sh, six.unichr(58).encode("latin-1"), P7Sx, P7Sm)
+			self.uranusculmination['Uranusculmination'] = '%s%s%s%s' % (P7Ch, six.unichr(58).encode("latin-1"), P7Cx, P7Cm)
+			self.uranusazimuth['Uranusazimuth'] = '%s %s' % (P7A, six.unichr(176).encode("latin-1"))
+			self.neptunerise['Neptunerise'] = '%s%s%s%s' % (P8Rh, six.unichr(58).encode("latin-1"), P8Rx, P8Rm)
+			self.neptuneset['Neptuneset'] = '%s%s%s%s' % (P8Sh, six.unichr(58).encode("latin-1"), P8Sx, P8Sm)
+			self.neptuneculmination['Neptuneculmination'] = '%s%s%s%s' % (P8Ch, six.unichr(58).encode("latin-1"), P8Cx, P8Cm)
+			self.neptuneazimuth['Neptuneazimuth'] = '%s %s' % (P8A, six.unichr(176).encode("latin-1"))
 			self.moondist['Moondist'] = _('%s km') % Mdist
-			self.moonazimuth['Moonazimuth'] = '%s %s' % (MA, unichr(176).encode("latin-1"))
-			self.moonrise['Moonrise'] = '%s%s%s%s' % (MRh, unichr(58).encode("latin-1"), MRx, MRm)
-			self.moonset['Moonset'] = '%s%s%s%s' % (MSh, unichr(58).encode("latin-1"), MSx, MSm)
-			self.moonculmination['Moonculmination'] = '%s%s%s%s' % (MCh, unichr(58).encode("latin-1"), MCx, MCm)
+			self.moonazimuth['Moonazimuth'] = '%s %s' % (MA, six.unichr(176).encode("latin-1"))
+			self.moonrise['Moonrise'] = '%s%s%s%s' % (MRh, six.unichr(58).encode("latin-1"), MRx, MRm)
+			self.moonset['Moonset'] = '%s%s%s%s' % (MSh, six.unichr(58).encode("latin-1"), MSx, MSm)
+			self.moonculmination['Moonculmination'] = '%s%s%s%s' % (MCh, six.unichr(58).encode("latin-1"), MCx, MCm)
 			self.moonphase['Moonphase'] = '%s' % phase
-			self.moonlight['Moonlight'] = '%s %s' % (light, unichr(37).encode("latin-1"))
+			self.moonlight['Moonlight'] = '%s %s' % (light, six.unichr(37).encode("latin-1"))
 			self.picmoon['PicMoon'] = '%s' % pic
 		except:
 			pass
@@ -2255,12 +2260,12 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["attribution"].text = _('n/a')
 			self.notdata = True
 		if self.temperature['Temperature'] != '':
-			self["temperature"].text = _('%s%s%s') % (self.temperature['Temperature'], unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature"].text = _('%s%s%s') % (self.temperature['Temperature'], six.unichr(176).encode("latin-1"), self.degreetype)
 		else:
 			self["temperature"].text = _('n/a')
 			self.notdata = True
 		if self.feelslike['Feelslike'] != '':
-			self["feelslike"].text = _('%s%s%s') % (self.feelslike['Feelslike'], unichr(176).encode("latin-1"), self.degreetype)
+			self["feelslike"].text = _('%s%s%s') % (self.feelslike['Feelslike'], six.unichr(176).encode("latin-1"), self.degreetype)
 		else:
 			self["feelslike"].text = _('n/a')
 			self.notdata = True
@@ -2270,12 +2275,12 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext"].text = _('n/a')
 			self.notdata = True
 		if self.humidity['Humidity'] != '':
-			self["humidity"].text = _('%s %s') % (self.humidity['Humidity'], unichr(37).encode("latin-1"))
+			self["humidity"].text = _('%s %s') % (self.humidity['Humidity'], six.unichr(37).encode("latin-1"))
 		else:
 			self["humidity"].text = _('n/a')
 			self.notdata = True
 		if self.windspeed['Windspeed'] != '':
-			self["wind"].text = _('%s %s %s') % (self.wind['Wind'], unichr(126).encode("latin-1"), self.windspeed['Windspeed'])
+			self["wind"].text = _('%s %s %s') % (self.wind['Wind'], six.unichr(126).encode("latin-1"), self.windspeed['Windspeed'])
 		else:
 			self["wind"].text = _('n/a')
 			self.notdata = True
@@ -2287,7 +2292,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic"].instance.show()
 # День 0
 		if self.lowtemp0['Lowtemp0'] != '' and self.hightemp0['Hightemp0'] != '':
-			self["temperature0"].text = _('%s%s%s / %s%s%s') % (self.hightemp0['Hightemp0'], unichr(176).encode("latin-1"), self.degreetype, self.lowtemp0['Lowtemp0'], unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature0"].text = _('%s%s%s / %s%s%s') % (self.hightemp0['Hightemp0'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp0['Lowtemp0'], six.unichr(176).encode("latin-1"), self.degreetype)
 		else:
 			self["temperature0"].text = _('n/a')
 			self.notdata = True
@@ -2297,7 +2302,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext0"].text = _('n/a')
 			self.notdata = True
 		if self.precip0['Precip0'] != '':
-			self["precip0"].text = _('%s %s') % (self.precip0['Precip0'], unichr(37).encode("latin-1"))
+			self["precip0"].text = _('%s %s') % (self.precip0['Precip0'], six.unichr(37).encode("latin-1"))
 		else:
 			self["precip0"].text = _('n/a')
 			self.notdata = True
@@ -2319,7 +2324,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic0"].instance.show()
 # День 1
 		if self.lowtemp1['Lowtemp1'] != '' and self.hightemp1['Hightemp1'] != '':
-			self["temperature1"].text = _('%s%s%s / %s%s%s') % (self.hightemp1['Hightemp1'], unichr(176).encode("latin-1"), self.degreetype, self.lowtemp1['Lowtemp1'], unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature1"].text = _('%s%s%s / %s%s%s') % (self.hightemp1['Hightemp1'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp1['Lowtemp1'], six.unichr(176).encode("latin-1"), self.degreetype)
 		else:
 			self["temperature1"].text = _('n/a')
 			self.notdata = True
@@ -2329,7 +2334,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext1"].text = _('n/a')
 			self.notdata = True
 		if self.precip1['Precip1'] != '':
-			self["precip1"].text = _('%s %s') % (self.precip1['Precip1'], unichr(37).encode("latin-1"))
+			self["precip1"].text = _('%s %s') % (self.precip1['Precip1'], six.unichr(37).encode("latin-1"))
 		else:
 			self["precip1"].text = _('n/a')
 			self.notdata = True
@@ -2351,7 +2356,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic1"].instance.show()
 # День 2
 		if self.lowtemp2['Lowtemp2'] != '' and self.hightemp2['Hightemp2'] != '':
-			self["temperature2"].text = _('%s%s%s / %s%s%s') % (self.hightemp2['Hightemp2'], unichr(176).encode("latin-1"), self.degreetype, self.lowtemp2['Lowtemp2'], unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature2"].text = _('%s%s%s / %s%s%s') % (self.hightemp2['Hightemp2'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp2['Lowtemp2'], six.unichr(176).encode("latin-1"), self.degreetype)
 		else:
 			self["temperature2"].text = _('n/a')
 			self.notdata = True
@@ -2361,7 +2366,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext2"].text = _('n/a')
 			self.notdata = True
 		if self.precip2['Precip2'] != '':
-			self["precip2"].text = _('%s %s') % (self.precip2['Precip2'], unichr(37).encode("latin-1"))
+			self["precip2"].text = _('%s %s') % (self.precip2['Precip2'], six.unichr(37).encode("latin-1"))
 		else:
 			self["precip2"].text = _('n/a')
 			self.notdata = True
@@ -2383,7 +2388,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic2"].instance.show()
 # День 3
 		if self.lowtemp3['Lowtemp3'] != '' and self.hightemp3['Hightemp3'] != '':
-			self["temperature3"].text = _('%s%s%s / %s%s%s') % (self.hightemp3['Hightemp3'], unichr(176).encode("latin-1"), self.degreetype, self.lowtemp3['Lowtemp3'], unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature3"].text = _('%s%s%s / %s%s%s') % (self.hightemp3['Hightemp3'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp3['Lowtemp3'], six.unichr(176).encode("latin-1"), self.degreetype)
 		else:
 			self["temperature3"].text = _('n/a')
 			self.notdata = True
@@ -2393,7 +2398,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext3"].text = _('n/a')
 			self.notdata = True
 		if self.precip3['Precip3'] != '':
-			self["precip3"].text = _('%s %s') % (self.precip3['Precip3'], unichr(37).encode("latin-1"))
+			self["precip3"].text = _('%s %s') % (self.precip3['Precip3'], six.unichr(37).encode("latin-1"))
 		else:
 			self["precip3"].text = _('n/a')
 			self.notdata = True
@@ -2415,7 +2420,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic3"].instance.show()
 # День 4
 		if self.lowtemp4['Lowtemp4'] != '' and self.hightemp4['Hightemp4'] != '':
-			self["temperature4"].text = _('%s%s%s / %s%s%s') % (self.hightemp4['Hightemp4'], unichr(176).encode("latin-1"), self.degreetype, self.lowtemp4['Lowtemp4'], unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature4"].text = _('%s%s%s / %s%s%s') % (self.hightemp4['Hightemp4'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp4['Lowtemp4'], six.unichr(176).encode("latin-1"), self.degreetype)
 		else:
 			self["temperature4"].text = _('n/a')
 			self.notdata = True
@@ -2425,7 +2430,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext4"].text = _('n/a')
 			self.notdata = True
 		if self.precip4['Precip4'] != '':
-			self["precip4"].text = _('%s %s') % (self.precip4['Precip4'], unichr(37).encode("latin-1"))
+			self["precip4"].text = _('%s %s') % (self.precip4['Precip4'], six.unichr(37).encode("latin-1"))
 		else:
 			self["precip4"].text = _('n/a')
 			self.notdata = True
