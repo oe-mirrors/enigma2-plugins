@@ -470,7 +470,7 @@ class ConfigCalendar(ConfigListScreen, Screen):
 		for x in self["config"].list:
 			x[1].save()
 		configfile.save()
-		self.mbox = self.session.open(MessageBox,(_("Configuration is saved")), MessageBox.TYPE_INFO, timeout = 3 )
+		self.mbox = self.session.open(MessageBox, (_("Configuration is saved")), MessageBox.TYPE_INFO, timeout = 3 )
 		self.close()
 
 def CalendarMenu(menuid):

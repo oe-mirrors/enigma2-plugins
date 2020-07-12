@@ -216,9 +216,9 @@ class DownSkinLIB(Screen):
 	# install plugin
 			os.system("cp /tmp/plugin.py %sDownSkinLIB/plugin.py" % (pluginpath))
 	# end
-			self.session.openWithCallback(self.restart, MessageBox,_("Do you want to restart the GUI now ?"), MessageBox.TYPE_YESNO)
+			self.session.openWithCallback(self.restart, MessageBox, _("Do you want to restart the GUI now ?"), MessageBox.TYPE_YESNO)
 		else:
-			self.session.open(MessageBox,(_("Download failed, check your internet connection !!!")), MessageBox.TYPE_INFO, timeout = 10)
+			self.session.open(MessageBox, (_("Download failed, check your internet connection !!!")), MessageBox.TYPE_INFO, timeout = 10)
 
 	def install_com(self):
 		pluginpath = "/usr/lib/enigma2/python/Plugins/Extensions/"
@@ -313,9 +313,9 @@ class DownSkinLIB(Screen):
 			os.system("cp /tmp/RunningText.py %sRenderer/RunningText.py" % (componentspath))
 			os.system("cp /tmp/Watches.py %sRenderer/Watches.py" % (componentspath))
 	# end
-			self.session.openWithCallback(self.restart, MessageBox,_("Do you want to restart the GUI now ?"), MessageBox.TYPE_YESNO)
+			self.session.openWithCallback(self.restart, MessageBox, _("Do you want to restart the GUI now ?"), MessageBox.TYPE_YESNO)
 		else:
-			self.session.open(MessageBox,(_("Download failed, check your internet connection !!!")), MessageBox.TYPE_INFO, timeout = 10)
+			self.session.open(MessageBox, (_("Download failed, check your internet connection !!!")), MessageBox.TYPE_INFO, timeout = 10)
 
 	def download_pl(self):
 # download plugin
