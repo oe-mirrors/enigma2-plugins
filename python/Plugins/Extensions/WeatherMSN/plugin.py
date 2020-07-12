@@ -2182,7 +2182,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self.sunculmination['Solstice'] = '%s%s%s%s' % (SCh, six.ensure_str(six.unichr(58)), SCx, SCm)
 			self.mercuryrise['Mercuryrise'] = '%s%s%s%s' % (P1Rh, six.ensure_str(six.unichr(58)), P1Rx, P1Rm)
 			self.mercuryset['Mercuryset'] = '%s%s%s%s' % (P1Sh, six.ensure_str(six.unichr(58)), P1Sx, P1Sm)
-			self.mercuryculmination['Mercuryculmination'] = '%s%s%s%s' % (P1Ch, six.ensure_str(six.unichr(58), P1Cx, P1Cm))
+			self.mercuryculmination['Mercuryculmination'] = '%s%s%s%s' % (P1Ch, six.ensure_str(six.unichr(58)), P1Cx, P1Cm)
 			self.mercuryazimuth['Mercuryazimuth'] = '%s %s' % (P1A, six.ensure_str(six.unichr(176)))
 			self.venusrise['Venusrise'] = '%s%s%s%s' % (P2Rh, six.ensure_str(six.unichr(58)), P2Rx, P2Rm)
 			self.venusset['Venusset'] = '%s%s%s%s' % (P2Sh, six.ensure_str(six.unichr(58)), P2Sx, P2Sm)
