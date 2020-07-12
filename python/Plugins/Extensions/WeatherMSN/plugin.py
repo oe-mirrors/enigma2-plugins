@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 from __future__ import print_function
 import datetime, time
 import os, math, gettext
@@ -30,14 +30,14 @@ from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from .Components.ActionMap import ActionMap
-from .Components.Label import Label
-from .Components.Sources.StaticText import StaticText
-from .Components.Language import language
-from .Components.MenuList import MenuList
-from .Components.ConfigList import ConfigListScreen
-from .Components.config import getConfigListEntry, ConfigText, ConfigYesNo, ConfigSubsection, ConfigSelection, config, configfile, NoSave
-from .Components.Pixmap import Pixmap
+from Components.ActionMap import ActionMap
+from Components.Label import Label
+from Components.Sources.StaticText import StaticText
+from Components.Language import language
+from Components.MenuList import MenuList
+from Components.ConfigList import ConfigListScreen
+from Components.config import getConfigListEntry, ConfigText, ConfigYesNo, ConfigSubsection, ConfigSelection, config, configfile, NoSave
+from Components.Pixmap import Pixmap
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_LANGUAGE
 from xml.etree.cElementTree import fromstring as cet_fromstring
 from twisted.web.client import downloadPage
@@ -73,7 +73,7 @@ config.plugins.weathermsn.menu = ConfigSelection(default="no", choices = [
 config.plugins.weathermsn.converter = ConfigSelection(default="no", choices = [
 	("no", _("no")),
 	("yes", _("yes"))])
-config.plugins.weathermsn.city = ConfigText(default="Moscow,Moscow-City,Russia", visible_width = 250, fixed_size = False)
+config.plugins.weathermsn.city = ConfigText(default="Hamburg, Germany", visible_width = 250, fixed_size = False)
 config.plugins.weathermsn.windtype = ConfigSelection(default="ms", choices = [
 	("ms", _("m/s")),
 	("fts", _("ft/s")),
@@ -669,9 +669,8 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self.onShow.append(self.get_weather_data)
 
 	def get_xmlfile(self):
-#		xmlfile = "http://weather.service.msn.com/data.aspx?weadegreetype=C&culture=ru-RU&weasearchstr=Moscow,Moscow-City,Russia&src=outlook"
 		xmlfile = "http://weather.service.msn.com/data.aspx?weadegreetype=%s&culture=%s&weasearchstr=%s&src=outlook" % (self.degreetype, self.language, quote(self.city))
-		downloadPage(xmlfile, "/tmp/weathermsn1.xml").addCallback(self.downloadFinished).addErrback(self.downloadFailed)
+		downloadPage(six.ensure_binary(xmlfile), "/tmp/weathermsn1.xml").addCallback(self.downloadFinished).addErrback(self.downloadFailed)
 
 	def downloadFinished(self, result):
 		print("[WeatherMSN] Download finished")
@@ -888,7 +887,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		# эклиптические координаты
 		DEC = math.asin(math.sin(EPS * DEG2RAD) * math.sin(SLong * DEG2RAD)) * RAD2DEG # склонение
 		ALFA = (7.53 * math.cos(LS * DEG2RAD) + 1.5 * math.sin(LS * DEG2RAD) - 9.87 * math.sin(2 * LS * DEG2RAD)) / 60 # уравнение времени
-		BETA = math.acos((math.cos(90.85 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) / (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG
+		BETA = math.acos((math.cos(90.85 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) // (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG
 		SSS = ALFA + (180 - long) / 15 + zone
 # Время восхода/захода
 		SCh = int(SSS)
@@ -960,7 +959,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		if RA < 0:
 			RA = RA + 2 * PI
 		DEC = math.asin(math.sin(PLat * DEG2RAD) * math.cos(EPS * DEG2RAD) + math.cos(PLat * DEG2RAD) * math.sin(EPS * DEG2RAD) * math.sin(PLong * DEG2RAD)) * RAD2DEG # склонение
-		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) / (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
+		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) // (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
 		SPR = math.fmod((RA - BETA + long - STT * 15 - zone * 15 * 1.0027379093) / 15 * 0.997269566423530, 24)
 		if SPR < 0:
 			SPR = SPR + 24
@@ -1036,7 +1035,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		if RA < 0:
 			RA = RA + 2 * PI
 		DEC = math.asin(math.sin(PLat * DEG2RAD) * math.cos(EPS * DEG2RAD) + math.cos(PLat * DEG2RAD) * math.sin(EPS * DEG2RAD) * math.sin(PLong * DEG2RAD)) * RAD2DEG # склонение
-		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) / (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
+		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) // (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
 		SPR = math.fmod((RA - BETA + long - STT * 15 - zone * 15 * 1.0027379093) / 15 * 0.997269566423530, 24)
 		if SPR < 0:
 			SPR = SPR + 24
@@ -1117,7 +1116,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		if RA < 0:
 			RA = RA + 2 * PI
 		DEC = math.asin(math.sin(PLat * DEG2RAD) * math.cos(EPS * DEG2RAD) + math.cos(PLat * DEG2RAD) * math.sin(EPS * DEG2RAD) * math.sin(PLong * DEG2RAD)) * RAD2DEG # склонение
-		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) / (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
+		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) // (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
 		SPR = math.fmod((RA - BETA + long - STT * 15 - zone * 15 * 1.0027379093) / 15 * 0.997269566423530, 24)
 		if SPR < 0:
 			SPR = SPR + 24
@@ -1218,7 +1217,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		if RA < 0:
 			RA = RA + 2 * PI
 		DEC = math.asin(math.sin(PLat * DEG2RAD) * math.cos(EPS * DEG2RAD) + math.cos(PLat * DEG2RAD) * math.sin(EPS * DEG2RAD) * math.sin(PLong * DEG2RAD)) * RAD2DEG # склонение
-		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) / (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
+		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) // (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
 		SPR = math.fmod((RA - BETA + long - STT * 15 - zone * 15 * 1.0027379093) / 15 * 0.997269566423530, 24)
 		if SPR < 0:
 			SPR = SPR + 24
@@ -1322,7 +1321,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		if RA < 0:
 			RA = RA + 2 * PI
 		DEC = math.asin(math.sin(PLat * DEG2RAD) * math.cos(EPS * DEG2RAD) + math.cos(PLat * DEG2RAD) * math.sin(EPS * DEG2RAD) * math.sin(PLong * DEG2RAD)) * RAD2DEG # склонение
-		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) / (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
+		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) // (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
 		SPR = math.fmod((RA - BETA + long - STT * 15 - zone * 15 * 1.0027379093) / 15 * 0.997269566423530, 24)
 		if SPR < 0:
 			SPR = SPR + 24
@@ -1404,7 +1403,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		if RA < 0:
 			RA = RA + 2 * PI
 		DEC = math.asin(math.sin(PLat * DEG2RAD) * math.cos(EPS * DEG2RAD) + math.cos(PLat * DEG2RAD) * math.sin(EPS * DEG2RAD) * math.sin(PLong * DEG2RAD)) * RAD2DEG # склонение
-		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) / (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
+		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) // (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
 		SPR = math.fmod((RA - BETA + long - STT * 15 - zone * 15 * 1.0027379093) / 15 * 0.997269566423530, 24)
 		if SPR < 0:
 			SPR = SPR + 24
@@ -1481,7 +1480,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		if RA < 0:
 			RA = RA + 2 * PI
 		DEC = math.asin(math.sin(PLat * DEG2RAD) * math.cos(EPS * DEG2RAD) + math.cos(PLat * DEG2RAD) * math.sin(EPS * DEG2RAD) * math.sin(PLong * DEG2RAD)) * RAD2DEG # склонение
-		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) / (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
+		BETA = math.acos((math.cos(90.35 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) // (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
 		SPR = math.fmod((RA - BETA + long - STT * 15 - zone * 15 * 1.0027379093) / 15 * 0.997269566423530, 24)
 		if SPR < 0:
 			SPR = SPR + 24
@@ -1562,7 +1561,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		DEC = math.asin(math.sin(MLat * DEG2RAD) * math.cos(EPS * DEG2RAD) + math.cos(MLat * DEG2RAD) * math.sin(EPS * DEG2RAD) * math.sin(MLong * DEG2RAD)) * RAD2DEG # склонение
 		if RA < 0:
 			RA = RA + 2 * PI
-		BETA = math.acos((math.cos(89.55 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) / (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
+		BETA = math.acos((math.cos(89.55 * DEG2RAD) - math.sin(DEC * DEG2RAD) * math.sin(lat * DEG2RAD)) // (math.cos(DEC * DEG2RAD) * math.cos(lat * DEG2RAD))) * RAD2DEG # часовой угол
 		SMR = math.fmod((RA - BETA - long - STT * 15 + zone * 15 * 1.0027379093) / 15 * 0.997269566423530, 24)
 		if SMR < 0:
 			SMR = SMR + 24
@@ -2178,44 +2177,44 @@ class WeatherMSN(ConfigListScreen, Screen):
 				phase = _('Full moon')
 		try:
 			self.yulianday['Julianday'] = JD
-			self.sunrise['Sunrise'] = '%s%s%s%s' % (SRh, six.unichr(58).encode("latin-1"), SRx, SRm)
-			self.sunset['Sunset'] = '%s%s%s%s' % (SSh, six.unichr(58).encode("latin-1"), SSx, SSm)
-			self.sunculmination['Solstice'] = '%s%s%s%s' % (SCh, six.unichr(58).encode("latin-1"), SCx, SCm)
-			self.mercuryrise['Mercuryrise'] = '%s%s%s%s' % (P1Rh, six.unichr(58).encode("latin-1"), P1Rx, P1Rm)
-			self.mercuryset['Mercuryset'] = '%s%s%s%s' % (P1Sh, six.unichr(58).encode("latin-1"), P1Sx, P1Sm)
-			self.mercuryculmination['Mercuryculmination'] = '%s%s%s%s' % (P1Ch, six.unichr(58).encode("latin-1"), P1Cx, P1Cm)
-			self.mercuryazimuth['Mercuryazimuth'] = '%s %s' % (P1A, six.unichr(176).encode("latin-1"))
-			self.venusrise['Venusrise'] = '%s%s%s%s' % (P2Rh, six.unichr(58).encode("latin-1"), P2Rx, P2Rm)
-			self.venusset['Venusset'] = '%s%s%s%s' % (P2Sh, six.unichr(58).encode("latin-1"), P2Sx, P2Sm)
-			self.venusculmination['Venusculmination'] = '%s%s%s%s' % (P2Ch, six.unichr(58).encode("latin-1"), P2Cx, P2Cm)
-			self.venusazimuth['Venusazimuth'] = '%s %s' % (P2A, six.unichr(176).encode("latin-1"))
-			self.marsrise['Marsrise'] = '%s%s%s%s' % (P4Rh, six.unichr(58).encode("latin-1"), P4Rx, P4Rm)
-			self.marsset['Marsset'] = '%s%s%s%s' % (P4Sh, six.unichr(58).encode("latin-1"), P4Sx, P4Sm)
-			self.marsculmination['Marsculmination'] = '%s%s%s%s' % (P4Ch, six.unichr(58).encode("latin-1"), P4Cx, P4Cm)
-			self.marsazimuth['Marsazimuth'] = '%s %s' % (P4A, six.unichr(176).encode("latin-1"))
-			self.jupiterrise['Jupiterrise'] = '%s%s%s%s' % (P5Rh, six.unichr(58).encode("latin-1"), P5Rx, P5Rm)
-			self.jupiterset['Jupiterset'] = '%s%s%s%s' % (P5Sh, six.unichr(58).encode("latin-1"), P5Sx, P5Sm)
-			self.jupiterculmination['Jupiterculmination'] = '%s%s%s%s' % (P5Ch, six.unichr(58).encode("latin-1"), P5Cx, P5Cm)
-			self.jupiterazimuth['Jupiterazimuth'] = '%s %s' % (P5A, six.unichr(176).encode("latin-1"))
-			self.saturnrise['Saturnrise'] = '%s%s%s%s' % (P6Rh, six.unichr(58).encode("latin-1"), P6Rx, P6Rm)
-			self.saturnset['Saturnset'] = '%s%s%s%s' % (P6Sh, six.unichr(58).encode("latin-1"), P6Sx, P6Sm)
-			self.saturnculmination['Saturnculmination'] = '%s%s%s%s' % (P6Ch, six.unichr(58).encode("latin-1"), P6Cx, P6Cm)
-			self.saturnazimuth['Saturnazimuth'] = '%s %s' % (P6A, six.unichr(176).encode("latin-1"))
-			self.uranusrise['Uranusrise'] = '%s%s%s%s' % (P7Rh, six.unichr(58).encode("latin-1"), P7Rx, P7Rm)
-			self.uranusset['Uranusset'] = '%s%s%s%s' % (P7Sh, six.unichr(58).encode("latin-1"), P7Sx, P7Sm)
-			self.uranusculmination['Uranusculmination'] = '%s%s%s%s' % (P7Ch, six.unichr(58).encode("latin-1"), P7Cx, P7Cm)
-			self.uranusazimuth['Uranusazimuth'] = '%s %s' % (P7A, six.unichr(176).encode("latin-1"))
-			self.neptunerise['Neptunerise'] = '%s%s%s%s' % (P8Rh, six.unichr(58).encode("latin-1"), P8Rx, P8Rm)
-			self.neptuneset['Neptuneset'] = '%s%s%s%s' % (P8Sh, six.unichr(58).encode("latin-1"), P8Sx, P8Sm)
-			self.neptuneculmination['Neptuneculmination'] = '%s%s%s%s' % (P8Ch, six.unichr(58).encode("latin-1"), P8Cx, P8Cm)
-			self.neptuneazimuth['Neptuneazimuth'] = '%s %s' % (P8A, six.unichr(176).encode("latin-1"))
+			self.sunrise['Sunrise'] = '%s%s%s%s' % (SRh, six.ensure_str(six.unichr(58)), SRx, SRm)
+			self.sunset['Sunset'] = '%s%s%s%s' % (SSh, six.ensure_str(six.unichr(58)), SSx, SSm)
+			self.sunculmination['Solstice'] = '%s%s%s%s' % (SCh, six.ensure_str(six.unichr(58)), SCx, SCm)
+			self.mercuryrise['Mercuryrise'] = '%s%s%s%s' % (P1Rh, six.ensure_str(six.unichr(58)), P1Rx, P1Rm)
+			self.mercuryset['Mercuryset'] = '%s%s%s%s' % (P1Sh, six.ensure_str(six.unichr(58)), P1Sx, P1Sm)
+			self.mercuryculmination['Mercuryculmination'] = '%s%s%s%s' % (P1Ch, six.ensure_str(six.unichr(58), P1Cx, P1Cm))
+			self.mercuryazimuth['Mercuryazimuth'] = '%s %s' % (P1A, six.ensure_str(six.unichr(176)))
+			self.venusrise['Venusrise'] = '%s%s%s%s' % (P2Rh, six.ensure_str(six.unichr(58)), P2Rx, P2Rm)
+			self.venusset['Venusset'] = '%s%s%s%s' % (P2Sh, six.ensure_str(six.unichr(58)), P2Sx, P2Sm)
+			self.venusculmination['Venusculmination'] = '%s%s%s%s' % (P2Ch, six.ensure_str(six.unichr(58)), P2Cx, P2Cm)
+			self.venusazimuth['Venusazimuth'] = '%s %s' % (P2A, six.ensure_str(six.unichr(176)))
+			self.marsrise['Marsrise'] = '%s%s%s%s' % (P4Rh, six.ensure_str(six.unichr(58)), P4Rx, P4Rm)
+			self.marsset['Marsset'] = '%s%s%s%s' % (P4Sh, six.ensure_str(six.unichr(58)), P4Sx, P4Sm)
+			self.marsculmination['Marsculmination'] = '%s%s%s%s' % (P4Ch, six.ensure_str(six.unichr(58)), P4Cx, P4Cm)
+			self.marsazimuth['Marsazimuth'] = '%s %s' % (P4A, six.ensure_str(six.unichr(176)))
+			self.jupiterrise['Jupiterrise'] = '%s%s%s%s' % (P5Rh, six.ensure_str(six.unichr(58)), P5Rx, P5Rm)
+			self.jupiterset['Jupiterset'] = '%s%s%s%s' % (P5Sh, six.ensure_str(six.unichr(58)), P5Sx, P5Sm)
+			self.jupiterculmination['Jupiterculmination'] = '%s%s%s%s' % (P5Ch, six.ensure_str(six.unichr(58)), P5Cx, P5Cm)
+			self.jupiterazimuth['Jupiterazimuth'] = '%s %s' % (P5A, six.ensure_str(six.unichr(176)))
+			self.saturnrise['Saturnrise'] = '%s%s%s%s' % (P6Rh, six.ensure_str(six.unichr(58)), P6Rx, P6Rm)
+			self.saturnset['Saturnset'] = '%s%s%s%s' % (P6Sh, six.ensure_str(six.unichr(58)), P6Sx, P6Sm)
+			self.saturnculmination['Saturnculmination'] = '%s%s%s%s' % (P6Ch, six.ensure_str(six.unichr(58)), P6Cx, P6Cm)
+			self.saturnazimuth['Saturnazimuth'] = '%s %s' % (P6A, six.ensure_str(six.unichr(176)))
+			self.uranusrise['Uranusrise'] = '%s%s%s%s' % (P7Rh, six.ensure_str(six.unichr(58)), P7Rx, P7Rm)
+			self.uranusset['Uranusset'] = '%s%s%s%s' % (P7Sh, six.ensure_str(six.unichr(58)), P7Sx, P7Sm)
+			self.uranusculmination['Uranusculmination'] = '%s%s%s%s' % (P7Ch, six.ensure_str(six.unichr(58)), P7Cx, P7Cm)
+			self.uranusazimuth['Uranusazimuth'] = '%s %s' % (P7A, six.ensure_str(six.unichr(176)))
+			self.neptunerise['Neptunerise'] = '%s%s%s%s' % (P8Rh, six.ensure_str(six.unichr(58)), P8Rx, P8Rm)
+			self.neptuneset['Neptuneset'] = '%s%s%s%s' % (P8Sh, six.ensure_str(six.unichr(58)), P8Sx, P8Sm)
+			self.neptuneculmination['Neptuneculmination'] = '%s%s%s%s' % (P8Ch, six.ensure_str(six.unichr(58)), P8Cx, P8Cm)
+			self.neptuneazimuth['Neptuneazimuth'] = '%s %s' % (P8A, six.ensure_str(six.unichr(176)))
 			self.moondist['Moondist'] = _('%s km') % Mdist
-			self.moonazimuth['Moonazimuth'] = '%s %s' % (MA, six.unichr(176).encode("latin-1"))
-			self.moonrise['Moonrise'] = '%s%s%s%s' % (MRh, six.unichr(58).encode("latin-1"), MRx, MRm)
-			self.moonset['Moonset'] = '%s%s%s%s' % (MSh, six.unichr(58).encode("latin-1"), MSx, MSm)
-			self.moonculmination['Moonculmination'] = '%s%s%s%s' % (MCh, six.unichr(58).encode("latin-1"), MCx, MCm)
+			self.moonazimuth['Moonazimuth'] = '%s %s' % (MA, six.ensure_str(six.unichr(176)))
+			self.moonrise['Moonrise'] = '%s%s%s%s' % (MRh, six.ensure_str(six.unichr(58)), MRx, MRm)
+			self.moonset['Moonset'] = '%s%s%s%s' % (MSh, six.ensure_str(six.unichr(58)), MSx, MSm)
+			self.moonculmination['Moonculmination'] = '%s%s%s%s' % (MCh, six.ensure_str(six.unichr(58)), MCx, MCm)
 			self.moonphase['Moonphase'] = '%s' % phase
-			self.moonlight['Moonlight'] = '%s %s' % (light, six.unichr(37).encode("latin-1"))
+			self.moonlight['Moonlight'] = '%s %s' % (light, six.ensure_str(six.unichr(37)))
 			self.picmoon['PicMoon'] = '%s' % pic
 		except:
 			pass
@@ -2260,12 +2259,12 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["attribution"].text = _('n/a')
 			self.notdata = True
 		if self.temperature['Temperature'] != '':
-			self["temperature"].text = _('%s%s%s') % (self.temperature['Temperature'], six.unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature"].text = _('%s%s%s') % (self.temperature['Temperature'], six.ensure_str(six.unichr(176)), self.degreetype)
 		else:
 			self["temperature"].text = _('n/a')
 			self.notdata = True
 		if self.feelslike['Feelslike'] != '':
-			self["feelslike"].text = _('%s%s%s') % (self.feelslike['Feelslike'], six.unichr(176).encode("latin-1"), self.degreetype)
+			self["feelslike"].text = _('%s%s%s') % (self.feelslike['Feelslike'], six.ensure_str(six.unichr(176)), self.degreetype)
 		else:
 			self["feelslike"].text = _('n/a')
 			self.notdata = True
@@ -2275,12 +2274,12 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext"].text = _('n/a')
 			self.notdata = True
 		if self.humidity['Humidity'] != '':
-			self["humidity"].text = _('%s %s') % (self.humidity['Humidity'], six.unichr(37).encode("latin-1"))
+			self["humidity"].text = _('%s %s') % (self.humidity['Humidity'], six.ensure_str(six.unichr(37)))
 		else:
 			self["humidity"].text = _('n/a')
 			self.notdata = True
 		if self.windspeed['Windspeed'] != '':
-			self["wind"].text = _('%s %s %s') % (self.wind['Wind'], six.unichr(126).encode("latin-1"), self.windspeed['Windspeed'])
+			self["wind"].text = _('%s %s %s') % (self.wind['Wind'], six.ensure_str(six.unichr(126)), self.windspeed['Windspeed'])
 		else:
 			self["wind"].text = _('n/a')
 			self.notdata = True
@@ -2292,7 +2291,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic"].instance.show()
 # День 0
 		if self.lowtemp0['Lowtemp0'] != '' and self.hightemp0['Hightemp0'] != '':
-			self["temperature0"].text = _('%s%s%s / %s%s%s') % (self.hightemp0['Hightemp0'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp0['Lowtemp0'], six.unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature0"].text = _('%s%s%s / %s%s%s') % (self.hightemp0['Hightemp0'], six.ensure_str(six.unichr(176)), self.degreetype, self.lowtemp0['Lowtemp0'], six.ensure_str(six.unichr(176)), self.degreetype)
 		else:
 			self["temperature0"].text = _('n/a')
 			self.notdata = True
@@ -2302,7 +2301,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext0"].text = _('n/a')
 			self.notdata = True
 		if self.precip0['Precip0'] != '':
-			self["precip0"].text = _('%s %s') % (self.precip0['Precip0'], six.unichr(37).encode("latin-1"))
+			self["precip0"].text = _('%s %s') % (self.precip0['Precip0'], six.ensure_str(six.unichr(37)))
 		else:
 			self["precip0"].text = _('n/a')
 			self.notdata = True
@@ -2324,7 +2323,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic0"].instance.show()
 # День 1
 		if self.lowtemp1['Lowtemp1'] != '' and self.hightemp1['Hightemp1'] != '':
-			self["temperature1"].text = _('%s%s%s / %s%s%s') % (self.hightemp1['Hightemp1'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp1['Lowtemp1'], six.unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature1"].text = _('%s%s%s / %s%s%s') % (self.hightemp1['Hightemp1'], six.ensure_str(six.unichr(176)), self.degreetype, self.lowtemp1['Lowtemp1'], six.ensure_str(six.unichr(176)), self.degreetype)
 		else:
 			self["temperature1"].text = _('n/a')
 			self.notdata = True
@@ -2334,7 +2333,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext1"].text = _('n/a')
 			self.notdata = True
 		if self.precip1['Precip1'] != '':
-			self["precip1"].text = _('%s %s') % (self.precip1['Precip1'], six.unichr(37).encode("latin-1"))
+			self["precip1"].text = _('%s %s') % (self.precip1['Precip1'], six.ensure_str(six.unichr(37)))
 		else:
 			self["precip1"].text = _('n/a')
 			self.notdata = True
@@ -2356,7 +2355,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic1"].instance.show()
 # День 2
 		if self.lowtemp2['Lowtemp2'] != '' and self.hightemp2['Hightemp2'] != '':
-			self["temperature2"].text = _('%s%s%s / %s%s%s') % (self.hightemp2['Hightemp2'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp2['Lowtemp2'], six.unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature2"].text = _('%s%s%s / %s%s%s') % (self.hightemp2['Hightemp2'], six.ensure_str(six.unichr(176)), self.degreetype, self.lowtemp2['Lowtemp2'], six.ensure_str(six.unichr(176)), self.degreetype)
 		else:
 			self["temperature2"].text = _('n/a')
 			self.notdata = True
@@ -2366,7 +2365,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext2"].text = _('n/a')
 			self.notdata = True
 		if self.precip2['Precip2'] != '':
-			self["precip2"].text = _('%s %s') % (self.precip2['Precip2'], six.unichr(37).encode("latin-1"))
+			self["precip2"].text = _('%s %s') % (self.precip2['Precip2'], six.ensure_str(six.unichr(37)))
 		else:
 			self["precip2"].text = _('n/a')
 			self.notdata = True
@@ -2388,7 +2387,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic2"].instance.show()
 # День 3
 		if self.lowtemp3['Lowtemp3'] != '' and self.hightemp3['Hightemp3'] != '':
-			self["temperature3"].text = _('%s%s%s / %s%s%s') % (self.hightemp3['Hightemp3'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp3['Lowtemp3'], six.unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature3"].text = _('%s%s%s / %s%s%s') % (self.hightemp3['Hightemp3'], six.ensure_str(six.unichr(176)), self.degreetype, self.lowtemp3['Lowtemp3'], six.ensure_str(six.unichr(176)), self.degreetype)
 		else:
 			self["temperature3"].text = _('n/a')
 			self.notdata = True
@@ -2398,7 +2397,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext3"].text = _('n/a')
 			self.notdata = True
 		if self.precip3['Precip3'] != '':
-			self["precip3"].text = _('%s %s') % (self.precip3['Precip3'], six.unichr(37).encode("latin-1"))
+			self["precip3"].text = _('%s %s') % (self.precip3['Precip3'], six.ensure_str(six.unichr(37)))
 		else:
 			self["precip3"].text = _('n/a')
 			self.notdata = True
@@ -2420,7 +2419,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 		self["pic3"].instance.show()
 # День 4
 		if self.lowtemp4['Lowtemp4'] != '' and self.hightemp4['Hightemp4'] != '':
-			self["temperature4"].text = _('%s%s%s / %s%s%s') % (self.hightemp4['Hightemp4'], six.unichr(176).encode("latin-1"), self.degreetype, self.lowtemp4['Lowtemp4'], six.unichr(176).encode("latin-1"), self.degreetype)
+			self["temperature4"].text = _('%s%s%s / %s%s%s') % (self.hightemp4['Hightemp4'], six.ensure_str(six.unichr(176)), self.degreetype, self.lowtemp4['Lowtemp4'], six.ensure_str(six.unichr(176)), self.degreetype)
 		else:
 			self["temperature4"].text = _('n/a')
 			self.notdata = True
@@ -2430,7 +2429,7 @@ class WeatherMSN(ConfigListScreen, Screen):
 			self["skytext4"].text = _('n/a')
 			self.notdata = True
 		if self.precip4['Precip4'] != '':
-			self["precip4"].text = _('%s %s') % (self.precip4['Precip4'], six.unichr(37).encode("latin-1"))
+			self["precip4"].text = _('%s %s') % (self.precip4['Precip4'], six.ensure_str(six.unichr(37)))
 		else:
 			self["precip4"].text = _('n/a')
 			self.notdata = True
@@ -2850,7 +2849,7 @@ def search_title(id):
 	if content:
 		for childs in root:
 			if childs.tag == 'weather':
-				locationcode = "%s,%s" % (childs.attrib.get('weatherlocationname').encode('utf-8', 'ignore'), childs.attrib.get('region').encode('utf-8', 'ignore'))
+				locationcode = "%s,%s" % (six.ensure_str(childs.attrib.get('weatherlocationname'), errors='ignore'), six.ensure_str(childs.attrib.get('region'), errors='ignore'))
 				search_results.append(locationcode)
 	return search_results
 
